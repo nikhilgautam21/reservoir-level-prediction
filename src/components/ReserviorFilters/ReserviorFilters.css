@@ -1,0 +1,9 @@
+
+.filter-container{
+    margin-top:50px;
+    text-align: left;
+    padding:20px;
+    display: flex;
+    align-items: flex-end;
+    gap:20px;
+}

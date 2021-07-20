@@ -1,3 +1,8 @@
+@import 'semantic-ui-css/semantic.min.css';
+
+html{
+  
+}
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
