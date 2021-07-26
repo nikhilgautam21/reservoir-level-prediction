@@ -9,45 +9,83 @@ import {
 } from "semantic-ui-react";
 import ReserviorDetails from "../ReserviorDetails/ReserviorDetails";
 import "./ReserviorFilters.css";
-import {getImageForRiver, getPredictionImageForRiver} from '../../utils/imageHelper';
+import {
+  getReserviorData,
+  getImageForRiver,
+  getFiltersData,
+  getPredicationImageForRiver,
+} from "../../utils/imageHelper";
 
 class ReserviorFilters extends React.Component {
   constructor(props) {
+    const reserviorData = getReserviorData();
+    const filtersData = getFiltersData();
     super(props);
 
     this.state = {
-      options1: [
-        { key: 1, text: "Choice 1", value: 1 },
-        { key: 2, text: "Choice 2", value: 2 },
-        { key: 3, text: "Choice 3", value: 3 },
-      ],
-      options2: [
-        { key: 1, text: "Choice 1", value: 1 },
-        { key: 2, text: "Choice 2", value: 2 },
-      ],
+      options1: reserviorData,
+      options2: filtersData,
       scrollToResult: false,
-      reserviorData:{},
-      showPrediction:false
+      reserviorData: {},
+      showPredictBtn: false,
+      showPrediction: false,
     };
   }
 
   componentDidMount() {}
 
   handleClick = () => {
-    this.setState({showPrediction:true, scrollToResult:true})
+    this.setState({ showPrediction: true, scrollToResult: true });
   };
 
-  handleReserviorChange = (event,{value,text}) =>{
-    this.setState({selectedReservoir:value})
-    const reserviorImage = getImageForRiver(value); 
-    this.setState({reserviorData: {...this.state.reserviorData,reserviorImage, reserviorName: event.target.textContent}})
-  }
+  handleReserviorChange = (event, { value, text }) => {
+    let reserviorImage;
+    this.setState({ selectedReservoir: value });
+    if (this.state.reserviorData.selectedConstraint) {
+      reserviorImage = getImageForRiver(
+        value,
+        this.state.reserviorData.selectedConstraint
+      );
+    }
+    value === "KRS"
+      ? this.setState({ showPredictBtn: true })
+      : this.setState({
+          predictionImage: null,
+          showPredictBtn: false,
+          showPrediction: false,
+          scrollToResult: false,
+        });
+    this.setState({
+      reserviorData: {
+        ...this.state.reserviorData,
+        reserviorImage,
+        reserviorName: event.target.textContent,
+      },
+    });
+  };
 
-  handlePrediction = (event,{value}) =>{
-    this.setState({selectedConstraint:value})
-    const predictionImage = getPredictionImageForRiver(this.state.selectedReservoir, value)
-    this.setState({reserviorData:{...this.state.reserviorData, predictionImage, showPrediction:false}})
-  }
+  handlePrediction = (event, { value }) => {
+    let predictionImage = null;
+    if (this.state.selectedReservoir === "KRS") {
+      predictionImage = getPredicationImageForRiver(
+        this.state.selectedReservoir,
+        value
+      );
+    }
+    const reserviorImage = getImageForRiver(
+      this.state.selectedReservoir,
+      value
+    );
+    this.setState({
+      reserviorData: {
+        ...this.state.reserviorData,
+        reserviorImage,
+        predictionImage,
+        showPrediction: false,
+        selectedConstraint: value,
+      },
+    });
+  };
 
   render() {
     return (
@@ -67,26 +105,26 @@ class ReserviorFilters extends React.Component {
               />
             </div>
             <div className="filter">
-              {this.state.selectedReservoir ?
+              {this.state.selectedReservoir ? (
                 <>
-                 <span>
-                 <b>Constraint:{"    "}</b>
-               </span>
-                <Dropdown
-                placeholder="Select an option"
-                options={this.state.options2}
-                selection
-                onChange={this.handlePrediction}
-                value={this.state.selectedConstraint}
-                />
+                  <span>
+                    <b>Constraint:{"    "}</b>
+                  </span>
+                  <Dropdown
+                    placeholder="Select an option"
+                    options={this.state.options2}
+                    selection
+                    onChange={this.handlePrediction}
+                    value={this.state.selectedConstraint}
+                  />
                 </>
-                :null
-              }
-            
+              ) : null}
             </div>
-            <Button onClick={this.handleClick} primary>
-              Predict next 90 days
-            </Button>
+            {this.state.showPredictBtn && (
+              <Button onClick={this.handleClick} primary>
+                Predict next 90 days
+              </Button>
+            )}
           </div>
         </Segment>
         <ReserviorDetails

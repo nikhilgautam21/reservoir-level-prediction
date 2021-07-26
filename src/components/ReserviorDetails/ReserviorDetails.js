@@ -44,7 +44,7 @@ class ReserviorDetails extends React.Component {
         {reserviorImage
           ? <Segment className="section-images">
               <h3>Hydrological Model of {reserviorName}</h3>
-              {predictionImage 
+              {reserviorImage 
                 ? <Image src={reserviorImage} centered={true}/>
                 : null
               } 
