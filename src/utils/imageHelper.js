@@ -51,8 +51,9 @@ export const getFiltersData = () => {
 };
 
 export const getPredicationImageForRiver = (river) => {
-  return predictionMapper[river];
+  return predictionMapper[river]
 };
+
 
 export const getImageForRiver = (river, contraint) => {
   return ImageMapper[river][contraint];
